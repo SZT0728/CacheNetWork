@@ -14,7 +14,7 @@
 
 + (NSMutableData *)dataFromDict:(NSDictionary *)dict;
 
-+ (NSDictionary *)dictFromData:(NSMutableData *)data;
++ (NSDictionary *)dictFromData:(NSData *)data;
 
 
 @end

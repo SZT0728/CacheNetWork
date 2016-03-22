@@ -40,18 +40,25 @@ static CacheNetWork *cacheNetWork = nil;
         NSError *error = dataDict[@"error"];
         completionBlock(data,response,error);
     }else{
-    
-        NSURLSessionConfiguration *sessionConfigure = [NSURLSessionConfiguration defaultSessionConfiguration];
         
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfigure delegate:CNK delegateQueue:[NSOperationQueue mainQueue]];
-        
+        NSDictionary *fileDict = [CacheDataBase selectDictWithUrlString:urlString];
+        if (fileDict) {
+            NSData *data = fileDict[@"data"];
+            NSURLResponse *response = fileDict[@"response"];
+            NSError *error = fileDict[@"error"];
+            completionBlock(data,response,error);
+        }else{
+            NSURLSessionConfiguration *sessionConfigure = [NSURLSessionConfiguration defaultSessionConfiguration];
+            
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfigure delegate:CNK delegateQueue:[NSOperationQueue mainQueue]];
+            
             NSURLSessionDataTask *task = [session dataTaskWithURL:[NSURL URLWithString:urlString] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
                 if (error) {
                     NSLog(@"请求出错：%@",error);
                 }else{
                     //请求成功后将数据存入到缓存中
                     NSDictionary *cacheDict = @{@"data":data,@"response":response};
-                    [CNK.myCache setObject:cacheDict forKey:urlString];
+//                    [CNK.myCache setObject:cacheDict forKey:urlString];
                     
                     //存储到沙盒中
                     [CacheDataBase insertDict:cacheDict WithMainKey:urlString];
@@ -64,6 +71,7 @@ static CacheNetWork *cacheNetWork = nil;
             }];
             [task resume];
 
+        }
     }
 }
 

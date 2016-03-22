@@ -21,4 +21,6 @@
 //往数据库里面添加字段 
 +(void)insertDict:(NSDictionary *)dict WithMainKey:(NSString *)string;
 
++ (NSDictionary *)selectDictWithUrlString:(NSString *)urlString;
+
 @end

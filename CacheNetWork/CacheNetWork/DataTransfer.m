@@ -21,7 +21,7 @@
     return data;
 }
 
-+ (NSDictionary *)dictFromData:(NSMutableData *)data
++ (NSDictionary *)dictFromData:(NSData *)data
 {
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
     NSDictionary *dict = [unarchiver decodeObjectForKey:@"dict"];
