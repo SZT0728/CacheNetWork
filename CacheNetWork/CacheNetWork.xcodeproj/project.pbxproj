@@ -16,6 +16,9 @@
 		649919BA1CA1389200BC555F /* CacheNetWorkUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 649919B91CA1389200BC555F /* CacheNetWorkUITests.m */; };
 		649919C91CA138A700BC555F /* CacheNetWork.m in Sources */ = {isa = PBXBuildFile; fileRef = 649919C81CA138A700BC555F /* CacheNetWork.m */; };
 		649919CC1CA138C000BC555F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 649919CB1CA138C000BC555F /* ViewController.m */; };
+		649919CF1CA13C0D00BC555F /* CacheDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 649919CE1CA13C0D00BC555F /* CacheDataBase.m */; };
+		649919D11CA1423600BC555F /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 649919D01CA1423600BC555F /* libsqlite3.tbd */; };
+		649919D41CA1633700BC555F /* DataTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 649919D31CA1633700BC555F /* DataTransfer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +57,11 @@
 		649919C81CA138A700BC555F /* CacheNetWork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheNetWork.m; sourceTree = "<group>"; };
 		649919CA1CA138C000BC555F /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		649919CB1CA138C000BC555F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		649919CD1CA13C0D00BC555F /* CacheDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDataBase.h; sourceTree = "<group>"; };
+		649919CE1CA13C0D00BC555F /* CacheDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheDataBase.m; sourceTree = "<group>"; };
+		649919D01CA1423600BC555F /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		649919D21CA1633700BC555F /* DataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransfer.h; sourceTree = "<group>"; };
+		649919D31CA1633700BC555F /* DataTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataTransfer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				649919D11CA1423600BC555F /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +93,7 @@
 		649919881CA1389100BC555F = {
 			isa = PBXGroup;
 			children = (
+				649919D01CA1423600BC555F /* libsqlite3.tbd */,
 				649919931CA1389100BC555F /* CacheNetWork */,
 				649919AD1CA1389200BC555F /* CacheNetWorkTests */,
 				649919B81CA1389200BC555F /* CacheNetWorkUITests */,
@@ -110,6 +120,10 @@
 				649919CB1CA138C000BC555F /* ViewController.m */,
 				649919C71CA138A700BC555F /* CacheNetWork.h */,
 				649919C81CA138A700BC555F /* CacheNetWork.m */,
+				649919CD1CA13C0D00BC555F /* CacheDataBase.h */,
+				649919CE1CA13C0D00BC555F /* CacheDataBase.m */,
+				649919D21CA1633700BC555F /* DataTransfer.h */,
+				649919D31CA1633700BC555F /* DataTransfer.m */,
 				6499199D1CA1389200BC555F /* Main.storyboard */,
 				649919A01CA1389200BC555F /* Assets.xcassets */,
 				649919A21CA1389200BC555F /* LaunchScreen.storyboard */,
@@ -275,9 +289,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				649919D41CA1633700BC555F /* DataTransfer.m in Sources */,
 				649919991CA1389200BC555F /* AppDelegate.m in Sources */,
 				649919961CA1389100BC555F /* main.m in Sources */,
 				649919CC1CA138C000BC555F /* ViewController.m in Sources */,
+				649919CF1CA13C0D00BC555F /* CacheDataBase.m in Sources */,
 				649919C91CA138A700BC555F /* CacheNetWork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -502,6 +518,7 @@
 				649919C01CA1389200BC555F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		649919C11CA1389200BC555F /* Build configuration list for PBXNativeTarget "CacheNetWorkTests" */ = {
 			isa = XCConfigurationList;
@@ -510,6 +527,7 @@
 				649919C31CA1389200BC555F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		649919C41CA1389200BC555F /* Build configuration list for PBXNativeTarget "CacheNetWorkUITests" */ = {
 			isa = XCConfigurationList;
@@ -518,6 +536,7 @@
 				649919C61CA1389200BC555F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

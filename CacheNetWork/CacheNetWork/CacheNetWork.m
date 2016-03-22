@@ -7,6 +7,7 @@
 //
 
 #import "CacheNetWork.h"
+#import "CacheDataBase.h"
 
 @interface CacheNetWork()<NSURLSessionDelegate>
 
@@ -51,9 +52,14 @@ static CacheNetWork *cacheNetWork = nil;
                     //请求成功后将数据存入到缓存中
                     NSDictionary *cacheDict = @{@"data":data,@"response":response};
                     [CNK.myCache setObject:cacheDict forKey:urlString];
+                    
+                    //存储到沙盒中
+                    [CacheDataBase insertDict:cacheDict WithMainKey:urlString];
+                    
                     //执行block
                     completionBlock(data,response,error);
                     NSLog(@"%@",[NSThread currentThread]);
+                    
                 }
             }];
             [task resume];

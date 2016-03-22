@@ -1,0 +1,77 @@
+//
+//  CacheDataBase.m
+//  CacheNetWork
+//
+//  Created by SZT on 16/3/22.
+//  Copyright © 2016年 SZT. All rights reserved.
+//
+
+#import "CacheDataBase.h"
+#import "DataTransfer.h"
+
+#define dataBaseName  @"CacheDataBase.sqlite"
+
+
+@implementation CacheDataBase
+
+static sqlite3 *dataBase = nil;
+
++ (sqlite3 *)open
+{
+    @synchronized(self) {
+        
+        if (dataBase == nil) {
+            NSString *docPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+            NSString *dataBasePath = [docPath stringByAppendingPathComponent:dataBaseName];
+            NSLog(@"数据库路径-------%@",dataBasePath);
+            int result = sqlite3_open(dataBasePath.UTF8String, &dataBase);
+            if (result == SQLITE_OK) {
+                NSLog(@"数据库打开成功");
+                NSString *creatSQL = @"create table 'Cache' (uid text primary key not null,dict blob);";
+                
+                int result2 = sqlite3_exec(dataBase, creatSQL.UTF8String, nil, nil, nil);
+                if (result2 == SQLITE_OK) {
+                    NSLog(@"数据库创建表创建成功");
+                }else{
+                    NSLog(@"数据库创建表失败");
+                }
+            }
+            
+        }
+        
+    }
+    return dataBase;
+}
+
++ (void)closeDataBase
+{
+    sqlite3_close(dataBase);
+}
+
+
+
++(void)insertDict:(NSDictionary *)dict WithMainKey:(NSString *)string
+{
+    sqlite3 *dB = [self open];
+    NSString *sql = [NSString stringWithFormat:@"insert into 'Cache' values('%@',?);",string];
+    sqlite3_stmt *stmt = nil;
+    int result = sqlite3_prepare_v2(dB, sql.UTF8String, -1, &stmt, nil);
+
+    if (result == SQLITE_OK) {
+        NSLog(@"插入语句可以使用");
+        //将字典转化了data类型之后绑定
+        NSMutableData *data = [DataTransfer dataFromDict:dict];
+        sqlite3_bind_blob(stmt, 1, [data bytes], (int)data.length, nil);
+        
+        sqlite3_step(stmt);
+    }else{
+        NSLog(@"插入语句不可用");
+    }
+    sqlite3_finalize(stmt);
+    
+}
+
+
+
+
+@end
