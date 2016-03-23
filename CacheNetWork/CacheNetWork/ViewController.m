@@ -14,6 +14,10 @@
 
 @property(nonatomic,strong)NSString *urlString;
 
+@property(nonatomic,strong)NSDictionary *dic;
+
+@property(nonatomic,strong)NSString *postUrl;
+
 @end
 
 @implementation ViewController
@@ -21,7 +25,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    
+    //get请求的url
     self.urlString = @"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0";
+    
+    
+    //post请求的url
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"20131129", @"date", @"1", @"startRecord", @"5", @"len", @"1234567890", @"udid", @"Iphone", @"terminalType", @"213", @"cid", nil];
+    self.dic = dic;
+    
+    NSString *postUrl = @"http://ipad-bjwb.bjd.com.cn/DigitalPublication/publish/Handler/APINewsList.ashx?";
+    self.postUrl = postUrl;
+
+    
+    
     /**
      *  普通get请求，支持内存缓存，沙盒缓存
      *
@@ -31,12 +48,57 @@
      *
      *  @return 
      */
-    /*
+    
     [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSLog(@"%@",rootDict);
     }];
+    
+    
+    /**
+     *  普通post请求
+     *
+     *  @param data     请求得到数据
+     *  @param response 请求得到响应头
+     *  @param error    请求出错时包含的错误信息
+     *
+     *  @return
      */
+    [CacheNetWork postWithUrlString:postUrl parameter:dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSLog(@"请求结果%@",rootDict);
+        
+    }];
+    
+    
+    
+}
+
+
+/**
+ *  重复请求操作
+ *
+ */
+- (IBAction)btnAction:(UIButton *)sender {
+    
+    [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSLog(@"请求结果%@",rootDict);
+    }];
+    
+    
+    [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSLog(@"%@",rootDict);
+    }];
+
+    
+}
+
+
+- (void)post
+{
     
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"20131129", @"date", @"1", @"startRecord", @"5", @"len", @"1234567890", @"udid", @"Iphone", @"terminalType", @"213", @"cid", nil];
     NSMutableString *httpMethod = [NSMutableString new];
@@ -45,7 +107,7 @@
         [httpMethod appendFormat:@"&%@=%@",key,value];
     }
     NSString *theString = [httpMethod substringFromIndex:1];
-//    NSLog(@"theString = %@",theString);
+    
     
     NSURLSession *session = [NSURLSession sharedSession];
     NSURL *url = [NSURL URLWithString:@"http://ipad-bjwb.bjd.com.cn/DigitalPublication/publish/Handler/APINewsList.ashx?"];
@@ -62,19 +124,7 @@
         }
     }];
     [task resume];
+
 }
 
-- (IBAction)btnAction:(UIButton *)sender {
-    
-//    CacheNetWork *cnk = [CacheNetWork shareCacheNetWork];
-    [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"%@",rootDict);
-    }];
-    
-
-
-    
-    
-}
 @end

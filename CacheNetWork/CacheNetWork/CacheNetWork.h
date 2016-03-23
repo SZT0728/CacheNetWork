@@ -23,7 +23,7 @@ typedef void(^requessSucceed)(NSData *data,NSURLResponse *response,NSError *erro
 
 + (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock;
 
-
++ (void)doingCompletionBlock:(requessSucceed)succeed WithDict:(NSDictionary *)dict;
 
 
 + (CacheNetWork *)shareCacheNetWork;

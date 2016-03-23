@@ -77,23 +77,57 @@ static CacheNetWork *cacheNetWork = nil;
 
 + (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock
 {
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
-    request.HTTPMethod = @"POST";
-    NSMutableString *httpMethod = [NSMutableString new];
-    for (NSString *key in dict.allKeys) {
-        NSString *value = dict[key];
-        [httpMethod appendFormat:@"&%@=%@",key,value];
-    }
-    request.HTTPBody = [[httpMethod substringFromIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-       
-        completionBlock(data,response,error);
+    CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
+    NSDictionary *dataDict = [CNK.myCache objectForKey:urlString];
+    if (dataDict) {//判断缓存中是否有数据
         
-    }];
-    [task resume];
-    
+        [self doingCompletionBlock:completionBlock WithDict:dataDict];
+        
+    }else{
+        NSDictionary *fileDict = [CacheDataBase selectDictWithUrlString:urlString];
+        if (fileDict) {
+            
+            [self doingCompletionBlock:completionBlock WithDict:fileDict];
+            
+        }else{
+            NSURLSession *session = [NSURLSession sharedSession];
+            NSURL *url = [NSURL URLWithString:urlString];
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
+            request.HTTPMethod = @"POST";
+            NSMutableString *httpMethod = [NSMutableString new];
+            for (NSString *key in dict.allKeys) {
+                NSString *value = dict[key];
+                [httpMethod appendFormat:@"&%@=%@",key,value];
+            }
+            request.HTTPBody = [[httpMethod substringFromIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
+            NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                
+                if (error) {
+                    NSLog(@"请求失败:%@",error);
+                }else{
+                    //请求成功后将数据存入到缓存中
+                    NSDictionary *cacheDict = @{@"data":data,@"response":response};
+                    [CNK.myCache setObject:cacheDict forKey:urlString];
+                    
+                    //同时存储到沙盒当中
+                    [CacheDataBase insertDict:cacheDict WithMainKey:urlString];
+                    //执行block
+                    completionBlock(data,response,error);
+                }
+                
+            }];
+            [task resume];
+        }
+    }
 }
+
++ (void)doingCompletionBlock:(requessSucceed)succeed WithDict:(NSDictionary *)dict
+{
+    NSData *data = dict[@"data"];
+    NSURLResponse *response = dict[@"response"];
+    NSError *error = dict[@"error"];
+    succeed(data,response,error);
+}
+
 
 @end
