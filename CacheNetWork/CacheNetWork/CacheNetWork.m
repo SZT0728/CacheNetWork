@@ -58,7 +58,7 @@ static CacheNetWork *cacheNetWork = nil;
                 }else{
                     //请求成功后将数据存入到缓存中
                     NSDictionary *cacheDict = @{@"data":data,@"response":response};
-//                    [CNK.myCache setObject:cacheDict forKey:urlString];
+                    [CNK.myCache setObject:cacheDict forKey:urlString];
                     
                     //存储到沙盒中
                     [CacheDataBase insertDict:cacheDict WithMainKey:urlString];
@@ -70,9 +70,30 @@ static CacheNetWork *cacheNetWork = nil;
                 }
             }];
             [task resume];
-
         }
     }
+}
+
+
++ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock
+{
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
+    request.HTTPMethod = @"POST";
+    NSMutableString *httpMethod = [NSMutableString new];
+    for (NSString *key in dict.allKeys) {
+        NSString *value = dict[key];
+        [httpMethod appendFormat:@"&%@=%@",key,value];
+    }
+    request.HTTPBody = [[httpMethod substringFromIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+       
+        completionBlock(data,response,error);
+        
+    }];
+    [task resume];
+    
 }
 
 @end

@@ -16,7 +16,14 @@ typedef void(^requessSucceed)(NSData *data,NSURLResponse *response,NSError *erro
 
 @property(nonatomic,strong)NSCache *myCache;
 
+
+//普通get请求支持内存缓存和沙盒缓存
 + (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock;
+
+
++ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock;
+
+
 
 
 + (CacheNetWork *)shareCacheNetWork;

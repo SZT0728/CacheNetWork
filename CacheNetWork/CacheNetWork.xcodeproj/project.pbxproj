@@ -53,15 +53,15 @@
 		649919B51CA1389200BC555F /* CacheNetWorkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CacheNetWorkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		649919B91CA1389200BC555F /* CacheNetWorkUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheNetWorkUITests.m; sourceTree = "<group>"; };
 		649919BB1CA1389200BC555F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		649919C71CA138A700BC555F /* CacheNetWork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheNetWork.h; sourceTree = "<group>"; };
-		649919C81CA138A700BC555F /* CacheNetWork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheNetWork.m; sourceTree = "<group>"; };
+		649919C71CA138A700BC555F /* CacheNetWork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheNetWork.h; path = CacheNetWork/CacheNetWork.h; sourceTree = SOURCE_ROOT; };
+		649919C81CA138A700BC555F /* CacheNetWork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CacheNetWork.m; path = CacheNetWork/CacheNetWork.m; sourceTree = SOURCE_ROOT; };
 		649919CA1CA138C000BC555F /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		649919CB1CA138C000BC555F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		649919CD1CA13C0D00BC555F /* CacheDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDataBase.h; sourceTree = "<group>"; };
-		649919CE1CA13C0D00BC555F /* CacheDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheDataBase.m; sourceTree = "<group>"; };
+		649919CD1CA13C0D00BC555F /* CacheDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheDataBase.h; path = ../CacheDataBase.h; sourceTree = "<group>"; };
+		649919CE1CA13C0D00BC555F /* CacheDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CacheDataBase.m; path = ../CacheDataBase.m; sourceTree = "<group>"; };
 		649919D01CA1423600BC555F /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		649919D21CA1633700BC555F /* DataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransfer.h; sourceTree = "<group>"; };
-		649919D31CA1633700BC555F /* DataTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataTransfer.m; sourceTree = "<group>"; };
+		649919D21CA1633700BC555F /* DataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataTransfer.h; path = ../DataTransfer.h; sourceTree = "<group>"; };
+		649919D31CA1633700BC555F /* DataTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataTransfer.m; path = ../DataTransfer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,12 +118,7 @@
 				649919981CA1389200BC555F /* AppDelegate.m */,
 				649919CA1CA138C000BC555F /* ViewController.h */,
 				649919CB1CA138C000BC555F /* ViewController.m */,
-				649919C71CA138A700BC555F /* CacheNetWork.h */,
-				649919C81CA138A700BC555F /* CacheNetWork.m */,
-				649919CD1CA13C0D00BC555F /* CacheDataBase.h */,
-				649919CE1CA13C0D00BC555F /* CacheDataBase.m */,
-				649919D21CA1633700BC555F /* DataTransfer.h */,
-				649919D31CA1633700BC555F /* DataTransfer.m */,
+				64991A161CA17CA500BC555F /* CacheNetWork */,
 				6499199D1CA1389200BC555F /* Main.storyboard */,
 				649919A01CA1389200BC555F /* Assets.xcassets */,
 				649919A21CA1389200BC555F /* LaunchScreen.storyboard */,
@@ -157,6 +152,19 @@
 				649919BB1CA1389200BC555F /* Info.plist */,
 			);
 			path = CacheNetWorkUITests;
+			sourceTree = "<group>";
+		};
+		64991A161CA17CA500BC555F /* CacheNetWork */ = {
+			isa = PBXGroup;
+			children = (
+				649919C71CA138A700BC555F /* CacheNetWork.h */,
+				649919C81CA138A700BC555F /* CacheNetWork.m */,
+				649919CD1CA13C0D00BC555F /* CacheDataBase.h */,
+				649919CE1CA13C0D00BC555F /* CacheDataBase.m */,
+				649919D21CA1633700BC555F /* DataTransfer.h */,
+				649919D31CA1633700BC555F /* DataTransfer.m */,
+			);
+			path = CacheNetWork;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -95,5 +95,16 @@ static sqlite3 *dataBase = nil;
     return dict;
 }
 
++(void)deleteDictWithUrlString:(NSString *)Urlstring
+{
+    sqlite3 *db = [self open];
+    NSString *sql = [NSString stringWithFormat:@"delete from 'Cache' where uid = '%@';",Urlstring];
+    int result = sqlite3_exec(db, sql.UTF8String, nil, nil, nil);
+    if (result == SQLITE_OK) {
+        NSLog(@"删除成功");
+    }
+}
+
+
 
 @end
