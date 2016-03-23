@@ -20,12 +20,16 @@ typedef void(^requessSucceed)(NSData *data,NSURLResponse *response,NSError *erro
 //普通get请求支持内存缓存和沙盒缓存
 + (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock;
 
-
+//普通post请求支持内存缓存和沙盒缓存
 + (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock;
 
-+ (void)doingCompletionBlock:(requessSucceed)succeed WithDict:(NSDictionary *)dict;
+//将字典里面的值出去来作为block的参数执行block
+//+ (void)doingCompletionBlock:(requessSucceed)succeed WithDict:(NSDictionary *)dict;
+
+//获取缓存框架的管理者，是一个单利
+//+ (CacheNetWork *)shareCacheNetWork;
 
 
-+ (CacheNetWork *)shareCacheNetWork;
++ (void)clearSandBoxCache;
 
 @end

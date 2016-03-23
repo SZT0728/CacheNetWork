@@ -105,6 +105,16 @@ static sqlite3 *dataBase = nil;
     }
 }
 
++ (void)deleteAllData
+{
+    sqlite3 *dB = [self open];
+    NSString *sql = @"delete from 'Cache';";
+    int result = sqlite3_exec(dB, sql.UTF8String, nil, nil, nil);
+    if (result == SQLITE_OK) {
+        NSLog(@"数据表全部删除");
+    }
+}
+
 
 
 @end

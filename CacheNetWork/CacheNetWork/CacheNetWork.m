@@ -30,23 +30,31 @@ static CacheNetWork *cacheNetWork = nil;
 }
 
 
+
+/**
+ *  普通get请求，支持内存缓存，沙盒缓存
+ *
+ *  @param data     请求到的data数据
+ *  @param response 响应头
+ *  @param error    请求出错时包含的错误信息
+ *
+ *  @return
+ */
 + (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock
 {
     CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
     NSDictionary *dataDict = [CNK.myCache objectForKey:urlString];
     if (dataDict) {
-        NSData *data = dataDict[@"data"];
-        NSURLResponse *response = dataDict[@"response"];
-        NSError *error = dataDict[@"error"];
-        completionBlock(data,response,error);
+
+        [self doingCompletionBlock:completionBlock WithDict:dataDict];
+        
     }else{
         
         NSDictionary *fileDict = [CacheDataBase selectDictWithUrlString:urlString];
         if (fileDict) {
-            NSData *data = fileDict[@"data"];
-            NSURLResponse *response = fileDict[@"response"];
-            NSError *error = fileDict[@"error"];
-            completionBlock(data,response,error);
+
+            [self doingCompletionBlock:completionBlock WithDict:fileDict];
+            
         }else{
             NSURLSessionConfiguration *sessionConfigure = [NSURLSessionConfiguration defaultSessionConfiguration];
             
@@ -74,7 +82,15 @@ static CacheNetWork *cacheNetWork = nil;
     }
 }
 
-
+/**
+ *  普通post请求
+ *
+ *  @param data     请求得到数据
+ *  @param response 请求得到响应头
+ *  @param error    请求出错时包含的错误信息
+ *
+ *  @return
+ */
 + (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock
 {
     CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
@@ -121,12 +137,25 @@ static CacheNetWork *cacheNetWork = nil;
     }
 }
 
+
+/**
+ *  将字典dict中的数据获取出来并且作为block的参数执行block
+ *
+ *  @param succeed 要执行的block
+ *  @param dict    字典
+ */
 + (void)doingCompletionBlock:(requessSucceed)succeed WithDict:(NSDictionary *)dict
 {
     NSData *data = dict[@"data"];
     NSURLResponse *response = dict[@"response"];
     NSError *error = dict[@"error"];
     succeed(data,response,error);
+}
+
+
++ (void)clearSandBoxCache
+{
+    [CacheDataBase deleteAllData];
 }
 
 

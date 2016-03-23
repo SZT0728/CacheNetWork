@@ -81,7 +81,7 @@
  *
  */
 - (IBAction)btnAction:(UIButton *)sender {
-    
+    /*
     [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSLog(@"请求结果%@",rootDict);
@@ -92,11 +92,14 @@
         NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSLog(@"%@",rootDict);
     }];
-
+     */
+    [CacheNetWork clearSandBoxCache];
     
 }
 
 
+
+//未封装的普通post请求
 - (void)post
 {
     
