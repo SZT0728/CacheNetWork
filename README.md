@@ -47,8 +47,7 @@ Example:
 ```
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"20131129", @"date", @"1", @"startRecord", @"5", @"len", @"1234567890", @"udid", @"Iphone", @"terminalType", @"213", @"cid", nil];
     
-    NSString *postUrl = @"http://ipad-bjwb.bjd.com.cn/DigitalPublication/publish/Handler/APINewsList.ashx?";
-    [CacheNetWork postWithUrlString:postUrl parameter:dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [CacheNetWork postWithUrlString:postUrlString  parameter:dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         //block何时回调同上
     }];
