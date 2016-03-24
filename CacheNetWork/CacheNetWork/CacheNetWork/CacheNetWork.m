@@ -11,6 +11,15 @@
 
 @interface CacheNetWork()<NSURLSessionDelegate>
 
+
+@property(nonatomic,copy)DownLoadprogress  downLoadProgress;
+
+@property(nonatomic,copy)DownloadResume  downLoadResume;
+
+@property(nonatomic,copy)DownLoadSucceed  downLoadSucceed;
+
+
+
 @end
 
 
@@ -45,14 +54,14 @@ static CacheNetWork *cacheNetWork = nil;
     CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
     NSDictionary *dataDict = [CNK.myCache objectForKey:urlString];
     if (dataDict) {
-
+        
         [self doingCompletionBlock:completionBlock WithDict:dataDict];
         
     }else{
         
         NSDictionary *fileDict = [CacheDataBase selectDictWithUrlString:urlString];
         if (fileDict) {
-
+            
             [self doingCompletionBlock:completionBlock WithDict:fileDict];
             
         }else{
@@ -130,7 +139,6 @@ static CacheNetWork *cacheNetWork = nil;
                     //执行block
                     completionBlock(data,response,error);
                 }
-                
             }];
             [task resume];
         }
@@ -152,11 +160,64 @@ static CacheNetWork *cacheNetWork = nil;
     succeed(data,response,error);
 }
 
-
+/**
+ *  清除沙盒缓存
+ */
 + (void)clearSandBoxCache
 {
     [CacheDataBase deleteAllData];
 }
+
+
++ (void)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress
+{
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:[CacheNetWork shareCacheNetWork] delegateQueue:[NSOperationQueue mainQueue]];
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSURLSessionDownloadTask *task = [session downloadTaskWithURL:url];
+    [task resume];
+    CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
+    CNK.downLoadSucceed = downLoadSucceed;
+    CNK.downLoadProgress = progress;
+    CNK.downLoadResume = resumedownload;
+}
+
+
+
+/**
+ *  下载结束的时候调用
+ *
+ *  @param location     下载好之后文件存储的位置
+ */
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+{
+    self.downLoadSucceed(session,downloadTask,location);
+}
+
+/**
+ *  恢复下载时调用
+ */
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
+{
+    self.downLoadResume(session,downloadTask,fileOffset,expectedTotalBytes);
+}
+
+
+/**
+ *  每当下载完（写完）一部分时就会调用（可能会被调用多次）
+ *
+ *  @param bytesWritten              这次调用写了多少
+ *  @param totalBytesWritten         累计写了多少长度到沙盒中了
+ *  @param totalBytesExpectedToWrite 文件的总长度
+ */
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    double progress = (double)totalBytesWritten / totalBytesExpectedToWrite;
+    self.downLoadProgress(session,downloadTask,progress);
+}
+
+
+
 
 
 @end

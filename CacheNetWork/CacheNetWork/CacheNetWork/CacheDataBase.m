@@ -16,6 +16,11 @@
 
 static sqlite3 *dataBase = nil;
 
+/**
+ *  打开数据库，数据库不存在的时候则创建。数据库打开之后才可以对数据库进行增删改查
+ *
+ *  @return 已经打开的数据库
+ */
 + (sqlite3 *)open
 {
     @synchronized(self) {
@@ -43,13 +48,19 @@ static sqlite3 *dataBase = nil;
     return dataBase;
 }
 
+//关闭数据库
 + (void)closeDataBase
 {
     sqlite3_close(dataBase);
 }
 
 
-
+/**
+ *  根据urlstring进行缓存
+ *
+ *  @param dict   要存储的字典
+ *  @param string urlstring
+ */
 +(void)insertDict:(NSDictionary *)dict WithMainKey:(NSString *)string
 {
     sqlite3 *dB = [self open];
@@ -71,6 +82,13 @@ static sqlite3 *dataBase = nil;
     
 }
 
+/**
+ *  根据urlstring获取数据
+ *
+ *  @param urlString
+ *
+ *  @return urlstring对应的Dict
+ */
 + (NSDictionary *)selectDictWithUrlString:(NSString *)urlString
 {
     NSDictionary *dict;
@@ -95,6 +113,12 @@ static sqlite3 *dataBase = nil;
     return dict;
 }
 
+
+/**
+ *   删除某一条数据
+ *
+ *  @param Urlstring 要删除的数据对应的url
+ */
 +(void)deleteDictWithUrlString:(NSString *)Urlstring
 {
     sqlite3 *db = [self open];
@@ -105,6 +129,9 @@ static sqlite3 *dataBase = nil;
     }
 }
 
+/**
+ *  删除所有内容
+ */
 + (void)deleteAllData
 {
     sqlite3 *dB = [self open];
