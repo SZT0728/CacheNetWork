@@ -11,7 +11,7 @@ CacheNetWork一个轻量级的支持离线缓存的框架
  *  @param urlString :请求的url字符串
  *  @param completionBlock :请求完成之后回调的block
  */
-+ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock;
++ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock failure:(requestFailure)failBlock;
 ```
 Example:
 发送一个普通的get请求
@@ -25,9 +25,12 @@ Example:
      *
      *  @return 
      */
-    [CacheNetWork getWithUrlString:urlString completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        //该block回调的时候：请求完成（成功或者失败）之后回调该block。可通过error是否为nil来判断请求是否成功
+   [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response) {
+        //该block是在请求成功之后回调
+    } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
+       //该block是在发送请求失败的时候回调
     }];
+
 
 ```
 ###2,post请求
@@ -40,16 +43,46 @@ Example:
  *  @param dict            请求附带的参数
  *  @param completionBlock 请求完成之后回调的block
  */
-+ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock;
++ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock failBlock:(requestFailure)failBlock;
 ```
 Example:
 发送一个post请求
 ```
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"20131129", @"date", @"1", @"startRecord", @"5", @"len", @"1234567890", @"udid", @"Iphone", @"terminalType", @"213", @"cid", nil];
-    
-    [CacheNetWork postWithUrlString:postUrlString  parameter:dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        
-        //block何时回调同上
+   [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response) {
+        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        //该block是在请求成功之后回调
+    } failBlock:^(NSURLSessionDataTask *dataTask, NSError *error) {
+       //该block是在发送请求失败的时候回调
     }];
-```
 
+```
+###3,下载
+####方法
+```
+/**
+    下载操作
+ *
+ *  @param urlString       下载的UrlString
+ *  @param downLoadSucceed 下载结束的时候回调
+ *  @param resumedownload  当任务中断后又重新开始下载的时候调用
+ *  @param progress        下载进度
+ *
+ *  @return 下载的任务
+ */
++ (NSURLSessionDownloadTask *)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress;
+```
+Example:
+执行一个下载操作
+```
+NSURLSessionDownloadTask *task = [CacheNetWork downloadFileWithUrlString:downLoadUrl finishedDownLoad:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, NSURL *fileLocation) {
+        
+       //下载完成的时候会回调该block
+    
+    } resumeDownLoad:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, int64_t fileOffset, int64_t expectedTotalBytes) {
+        //任务从中断状态又继续的时候会回调该block
+    } currentProgress:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, double progress) {
+        //执行下载操作过程种会一直调用该block，该Block会频繁的调用，可以在block种获得下载进度
+    }];
+    [task resume];
+
+```
