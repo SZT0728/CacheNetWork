@@ -56,4 +56,33 @@ Example:
     }];
 
 ```
+###3,下载
+####方法
+```
+/**
+    下载操作
+ *
+ *  @param urlString       下载的UrlString
+ *  @param downLoadSucceed 下载结束的时候回调
+ *  @param resumedownload  当任务中断后又重新开始下载的时候调用
+ *  @param progress        下载进度
+ *
+ *  @return 下载的任务
+ */
++ (NSURLSessionDownloadTask *)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress;
+```
+Example:
+执行一个下载操作
+```
+NSURLSessionDownloadTask *task = [CacheNetWork downloadFileWithUrlString:downLoadUrl finishedDownLoad:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, NSURL *fileLocation) {
+        
+       //下载完成的时候会回调该block
+    
+    } resumeDownLoad:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, int64_t fileOffset, int64_t expectedTotalBytes) {
+        //任务从中断状态又继续的时候会回调该block
+    } currentProgress:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, double progress) {
+        //执行下载操作过程种会一直调用该block，该Block会频繁的调用，可以在block种获得下载进度
+    }];
+    [task resume];
 
+```
