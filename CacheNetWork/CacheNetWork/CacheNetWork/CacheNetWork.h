@@ -8,8 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-// 请求数据回调block
-typedef void(^requessSucceed)(NSData *data,NSURLResponse *response,NSError *error);
+// 请求数据成功回调block
+typedef void(^requessSucceed)(NSData *data,NSURLResponse *response);
+
+//请求数据失败回调的block
+typedef void(^requestFailure)(NSURLSessionDataTask *dataTask,NSError *error);
 
 //下载完成回调block
 typedef void(^DownLoadSucceed)(NSURLSession *session,NSURLSessionDownloadTask *downLoadTask,NSURL *fileLocation);
@@ -27,7 +30,7 @@ typedef void(^DownLoadprogress)(NSURLSession *session,NSURLSessionDownloadTask *
 
 
 //普通get请求支持内存缓存和沙盒缓存
-+ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock;
++ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock failure:(requestFailure)failBlock;
 
 
 /**
@@ -37,7 +40,7 @@ typedef void(^DownLoadprogress)(NSURLSession *session,NSURLSessionDownloadTask *
  *  @param dict
  *  @param completionBlock
  */
-+ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock;
++ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock failBlock:(requestFailure)failBlock;
 
 /**
  *  清除沙盒缓存
@@ -45,7 +48,10 @@ typedef void(^DownLoadprogress)(NSURLSession *session,NSURLSessionDownloadTask *
 + (void)clearSandBoxCache;
 
 
-+ (void)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress;
+
++ (NSURLSessionDownloadTask *)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress;
+
+//+ (void)cancelDownLoadWith:(NSURLSessionDownloadTask *)downLoadtask;
 
 
 

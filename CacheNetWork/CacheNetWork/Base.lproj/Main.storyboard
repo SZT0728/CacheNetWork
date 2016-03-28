@@ -30,13 +30,43 @@
                                     <action selector="btnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="00F-Z9-ovI"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BWX-08-9aT">
+                                <rect key="frame" x="206" y="100" width="60" height="60"/>
+                                <color key="backgroundColor" red="0.27128556958292749" green="1" blue="0.91299741892270225" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="MRg-IH-bLw"/>
+                                    <constraint firstAttribute="width" constant="60" id="tMc-VP-vqw"/>
+                                </constraints>
+                                <state key="normal" title="下载"/>
+                                <connections>
+                                    <action selector="downLoad:" destination="BYZ-38-t0r" eventType="touchUpInside" id="G69-Nd-LiS"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gJt-to-w2G">
+                                <rect key="frame" x="50" y="210" width="90" height="20"/>
+                                <color key="backgroundColor" red="0.52520785724670205" green="1" blue="0.48948387781261515" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="Owc-ah-CX9"/>
+                                    <constraint firstAttribute="width" constant="90" id="zGD-BR-ybM"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="BWX-08-9aT" firstAttribute="leading" secondItem="I1I-Hd-JTl" secondAttribute="trailing" constant="60" id="3de-xt-Aj8"/>
+                            <constraint firstItem="gJt-to-w2G" firstAttribute="top" secondItem="BWX-08-9aT" secondAttribute="bottom" constant="50" id="NWX-XB-cE8"/>
+                            <constraint firstItem="BWX-08-9aT" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="80" id="OMR-Dl-NQG"/>
+                            <constraint firstItem="gJt-to-w2G" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="30" id="n1b-4I-GCM"/>
                             <constraint firstItem="I1I-Hd-JTl" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="107" id="pZg-GV-Gk1"/>
                             <constraint firstItem="I1I-Hd-JTl" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="80" id="ucQ-pZ-GrW"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="label" destination="gJt-to-w2G" id="hm2-eb-uO7"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

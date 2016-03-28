@@ -49,45 +49,31 @@ static CacheNetWork *cacheNetWork = nil;
  *
  *  @return
  */
-+ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock
++ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock failure:(requestFailure)failBlock
 {
+    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:[NSURL URLWithString:urlString] cachePolicy:(NSURLRequestReturnCacheDataElseLoad) timeoutInterval:5];
     CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
-    NSDictionary *dataDict = [CNK.myCache objectForKey:urlString];
-    if (dataDict) {
+    NSCachedURLResponse *cacheURLResponse = [[NSURLCache sharedURLCache]cachedResponseForRequest:request];
+    if (cacheURLResponse) {
         
-        [self doingCompletionBlock:completionBlock WithDict:dataDict];
+        [self doingCompletionBlock:completionBlock WitCacheURLRespnse:cacheURLResponse];
         
     }else{
+        NSURLSessionConfiguration *sessionConfigure = [NSURLSessionConfiguration defaultSessionConfiguration];
         
-        NSDictionary *fileDict = [CacheDataBase selectDictWithUrlString:urlString];
-        if (fileDict) {
-            
-            [self doingCompletionBlock:completionBlock WithDict:fileDict];
-            
-        }else{
-            NSURLSessionConfiguration *sessionConfigure = [NSURLSessionConfiguration defaultSessionConfiguration];
-            
-            NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfigure delegate:CNK delegateQueue:[NSOperationQueue mainQueue]];
-            
-            NSURLSessionDataTask *task = [session dataTaskWithURL:[NSURL URLWithString:urlString] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                if (error) {
-                    NSLog(@"请求出错：%@",error);
-                }else{
-                    //请求成功后将数据存入到缓存中
-                    NSDictionary *cacheDict = @{@"data":data,@"response":response};
-                    [CNK.myCache setObject:cacheDict forKey:urlString];
-                    
-                    //存储到沙盒中
-                    [CacheDataBase insertDict:cacheDict WithMainKey:urlString];
-                    
-                    //执行block
-                    completionBlock(data,response,error);
-                    NSLog(@"%@",[NSThread currentThread]);
-                    
-                }
-            }];
-            [task resume];
-        }
+        NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfigure delegate:CNK delegateQueue:[NSOperationQueue mainQueue]];
+        
+        NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            if (error) {
+                failBlock(task,error);
+            }else{
+                
+                //执行block
+                completionBlock(data,response);
+                
+            }
+        }];
+        [task resume];
     }
 }
 
@@ -100,7 +86,7 @@ static CacheNetWork *cacheNetWork = nil;
  *
  *  @return
  */
-+ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock
++ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock failBlock:(requestFailure)failBlock
 {
     CacheNetWork *CNK = [CacheNetWork shareCacheNetWork];
     NSDictionary *dataDict = [CNK.myCache objectForKey:urlString];
@@ -128,7 +114,7 @@ static CacheNetWork *cacheNetWork = nil;
             NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
                 
                 if (error) {
-                    NSLog(@"请求失败:%@",error);
+                    failBlock(task,error);
                 }else{
                     //请求成功后将数据存入到缓存中
                     NSDictionary *cacheDict = @{@"data":data,@"response":response};
@@ -137,7 +123,7 @@ static CacheNetWork *cacheNetWork = nil;
                     //同时存储到沙盒当中
                     [CacheDataBase insertDict:cacheDict WithMainKey:urlString];
                     //执行block
-                    completionBlock(data,response,error);
+                    completionBlock(data,response);
                 }
             }];
             [task resume];
@@ -156,8 +142,15 @@ static CacheNetWork *cacheNetWork = nil;
 {
     NSData *data = dict[@"data"];
     NSURLResponse *response = dict[@"response"];
-    NSError *error = dict[@"error"];
-    succeed(data,response,error);
+    
+    succeed(data,response);
+}
+
++ (void)doingCompletionBlock:(requessSucceed)succeed WitCacheURLRespnse:(NSCachedURLResponse *)cacheURLResponse
+{
+    NSData *data = cacheURLResponse.data;
+    NSURLResponse *response = cacheURLResponse.response;
+    succeed(data,response);
 }
 
 /**
@@ -169,7 +162,7 @@ static CacheNetWork *cacheNetWork = nil;
 }
 
 
-+ (void)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress
++ (NSURLSessionDownloadTask *)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:[CacheNetWork shareCacheNetWork] delegateQueue:[NSOperationQueue mainQueue]];
@@ -180,6 +173,7 @@ static CacheNetWork *cacheNetWork = nil;
     CNK.downLoadSucceed = downLoadSucceed;
     CNK.downLoadProgress = progress;
     CNK.downLoadResume = resumedownload;
+    return task;
 }
 
 
@@ -215,6 +209,24 @@ static CacheNetWork *cacheNetWork = nil;
     double progress = (double)totalBytesWritten / totalBytesExpectedToWrite;
     self.downLoadProgress(session,downloadTask,progress);
 }
+
+
++ (void)cancelDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadtask
+{
+    [downLoadtask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
+        [[CacheNetWork shareCacheNetWork].myCache setObject:resumeData forKey: downLoadtask.response.suggestedFilename];
+    }];
+}
+
++ (void)continueDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadTask
+{
+//    NSData *resumeData = [[CacheNetWork shareCacheNetWork].myCache objectForKey:downLoadTask.response.suggestedFilename];
+    
+    
+    [downLoadTask resume];
+    
+}
+
 
 
 

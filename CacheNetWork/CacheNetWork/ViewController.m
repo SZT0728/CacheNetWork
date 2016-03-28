@@ -18,6 +18,11 @@
 
 @property(nonatomic,strong)NSString *postUrl;
 
+@property (weak, nonatomic) IBOutlet UILabel *label;
+
+@property(nonatomic,assign)NSInteger index;
+
+
 @end
 
 @implementation ViewController
@@ -25,6 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.index = 1;
     
     //get请求的url
     self.urlString = @"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0";
@@ -49,12 +55,15 @@
      *  @return 
      */
     
-    [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response) {
         NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"%@",rootDict);
+        if (rootDict != nil) {
+            self.label.text = [NSString stringWithFormat:@"%ld",++self.index];
+            NSLog(@"%@get 1拿到数据",rootDict);
+        }
+    } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
+        NSLog(@"%@ get请求失败，出错error",error);
     }];
-    
-    
     /**
      *  普通post请求
      *
@@ -64,16 +73,44 @@
      *
      *  @return
      */
-    [CacheNetWork postWithUrlString:postUrl parameter:dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        
+    [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response) {
         NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"请求结果%@",rootDict);
+        if (rootDict != nil) {
+            self.label.text = [NSString stringWithFormat:@"%ld",++self.index];
+            NSLog(@"%@post 1拿到数据",rootDict);
+
+        }
+    } failBlock:^(NSURLSessionDataTask *dataTask, NSError *error) {
+        NSLog(@"%@ post请求失败，出错error",error);
+    }];
+    
+}
+
+- (IBAction)downLoad:(id)sender {
+    
+    NSString *downLoadUrl = @"http://localhost:8080/MJServer/resources/videos/minion_01.mp4";
+    NSURLSessionDownloadTask *task = [CacheNetWork downloadFileWithUrlString:downLoadUrl finishedDownLoad:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, NSURL *fileLocation) {
+        
+        NSString *docFile = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        NSString *moviePath = [docFile stringByAppendingPathComponent:downLoadTask.response.suggestedFilename];
+//        NSLog(@"----------%@",moviePath);
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        [fileManager moveItemAtPath:fileLocation.path toPath:moviePath error:nil];
+        
+        
+    } resumeDownLoad:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, int64_t fileOffset, int64_t expectedTotalBytes) {
+        
+        NSLog(@"+++++++++++");
+        
+    } currentProgress:^(NSURLSession *session, NSURLSessionDownloadTask *downLoadTask, double progress) {
         
     }];
+    [task resume];
     
     
     
 }
+
 
 
 /**
@@ -82,52 +119,31 @@
  */
 - (IBAction)btnAction:(UIButton *)sender {
     
-    [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    
+    [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response) {
         NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"请求结果%@",rootDict);
-    }];
-    
-    
-    [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"%@",rootDict);
-    }];
-    
-//    [CacheNetWork clearSandBoxCache];
-    
-}
-
-
-
-//未封装的普通post请求
-- (void)post
-{
-    
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"20131129", @"date", @"1", @"startRecord", @"5", @"len", @"1234567890", @"udid", @"Iphone", @"terminalType", @"213", @"cid", nil];
-    NSMutableString *httpMethod = [NSMutableString new];
-    for (NSString *key in dic.allKeys) {
-        NSString *value = dic[key];
-        [httpMethod appendFormat:@"&%@=%@",key,value];
-    }
-    NSString *theString = [httpMethod substringFromIndex:1];
-    
-    
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURL *url = [NSURL URLWithString:@"http://ipad-bjwb.bjd.com.cn/DigitalPublication/publish/Handler/APINewsList.ashx?"];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
-    request.HTTPMethod = @"POST";
-    request.HTTPBody = [theString dataUsingEncoding:NSUTF8StringEncoding];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"请求失败");
-        }else{
-            NSLog(@"请求成功");
-            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil];
-            NSLog(@"request data is = %@",dict);
+        if (rootDict != nil) {
+            self.label.text = [NSString stringWithFormat:@"%ld",++self.index];
+            NSLog(@"%@post拿到数据",rootDict);
         }
+    } failBlock:^(NSURLSessionDataTask *dataTask, NSError *error) {
+        NSLog(@"%@ 请求失败，出错error",error);
     }];
-    [task resume];
-
+    
+    
+    [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response) {
+        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        if (rootDict != nil) {
+            self.label.text = [NSString stringWithFormat:@"%ld",++self.index];
+            NSLog(@"%@get拿到数据",rootDict);
+        }
+    } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
+        
+    }];
+    
 }
+
+
+
 
 @end
