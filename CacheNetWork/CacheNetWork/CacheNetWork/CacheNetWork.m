@@ -19,6 +19,9 @@
 @property(nonatomic,copy)DownLoadSucceed  downLoadSucceed;
 
 
+@property(nonatomic,strong)NSURLSession *downLoadSession;
+
+
 
 @end
 
@@ -166,6 +169,7 @@ static CacheNetWork *cacheNetWork = nil;
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:[CacheNetWork shareCacheNetWork] delegateQueue:[NSOperationQueue mainQueue]];
+    [CacheNetWork shareCacheNetWork].downLoadSession = session;
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLSessionDownloadTask *task = [session downloadTaskWithURL:url];
     [task resume];
@@ -210,7 +214,11 @@ static CacheNetWork *cacheNetWork = nil;
     self.downLoadProgress(session,downloadTask,progress);
 }
 
-
+/**
+ *   暂停某个下载任务
+ *
+ *  @param downLoadtask 要暂停的下载任务
+ */
 + (void)cancelDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadtask
 {
     [downLoadtask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
@@ -218,11 +226,16 @@ static CacheNetWork *cacheNetWork = nil;
     }];
 }
 
+
+/**
+ *  继续某个下载任务
+ *
+ *  @param downLoadTask 要继续下载的任务
+ */
 + (void)continueDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadTask
 {
-//    NSData *resumeData = [[CacheNetWork shareCacheNetWork].myCache objectForKey:downLoadTask.response.suggestedFilename];
-    
-    
+    NSData *resumeData = [[CacheNetWork shareCacheNetWork].myCache objectForKey:downLoadTask.response.suggestedFilename];
+    [[CacheNetWork shareCacheNetWork].downLoadSession downloadTaskWithResumeData:resumeData];
     [downLoadTask resume];
     
 }

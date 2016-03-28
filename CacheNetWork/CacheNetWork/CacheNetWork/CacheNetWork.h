@@ -48,10 +48,31 @@ typedef void(^DownLoadprogress)(NSURLSession *session,NSURLSessionDownloadTask *
 + (void)clearSandBoxCache;
 
 
-
+/**
+    下载操作
+ *
+ *  @param urlString       下载的UrlString
+ *  @param downLoadSucceed 下载结束的时候回调
+ *  @param resumedownload  当任务中断后又重新开始下载的时候调用
+ *  @param progress        下载进度
+ *
+ *  @return 下载的任务
+ */
 + (NSURLSessionDownloadTask *)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress;
 
-//+ (void)cancelDownLoadWith:(NSURLSessionDownloadTask *)downLoadtask;
+/**
+ *   暂停某个下载任务
+ *
+ *  @param downLoadtask 要暂停的下载任务
+ */
++ (void)cancelDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadtask;
+
+/**
+ *  继续某个下载任务
+ *
+ *  @param downLoadTask 要继续下载的任务
+ */
++ (void)continueDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadTask;
 
 
 
