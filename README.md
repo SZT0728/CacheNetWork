@@ -11,7 +11,7 @@ CacheNetWork一个轻量级的支持离线缓存的框架
  *  @param urlString :请求的url字符串
  *  @param completionBlock :请求完成之后回调的block
  */
-+ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock;
++ (void)getWithUrlString:(NSString *)urlString  completionHandler:(requessSucceed)completionBlock failure:(requestFailure)failBlock;
 ```
 Example:
 发送一个普通的get请求
@@ -25,9 +25,12 @@ Example:
      *
      *  @return 
      */
-    [CacheNetWork getWithUrlString:urlString completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        //该block回调的时候：请求完成（成功或者失败）之后回调该block。可通过error是否为nil来判断请求是否成功
+   [CacheNetWork getWithUrlString:@"http://api.guozhoumoapp.com/v1/channels/22/items?limit=20&offset=0" completionHandler:^(NSData *data, NSURLResponse *response) {
+        //该block是在请求成功之后回调
+    } failure:^(NSURLSessionDataTask *dataTask, NSError *error) {
+       //该block是在发送请求失败的时候回调
     }];
+
 
 ```
 ###2,post请求
@@ -40,16 +43,17 @@ Example:
  *  @param dict            请求附带的参数
  *  @param completionBlock 请求完成之后回调的block
  */
-+ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock;
++ (void)postWithUrlString:(NSString *)urlString  parameter:(NSDictionary *)dict completionhandler:(requessSucceed)completionBlock failBlock:(requestFailure)failBlock;
 ```
 Example:
 发送一个post请求
 ```
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"20131129", @"date", @"1", @"startRecord", @"5", @"len", @"1234567890", @"udid", @"Iphone", @"terminalType", @"213", @"cid", nil];
-    
-    [CacheNetWork postWithUrlString:postUrlString  parameter:dic completionhandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        
-        //block何时回调同上
+   [CacheNetWork postWithUrlString:self.postUrl parameter:self.dic completionhandler:^(NSData *data, NSURLResponse *response) {
+        NSDictionary *rootDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        //该block是在请求成功之后回调
+    } failBlock:^(NSURLSessionDataTask *dataTask, NSError *error) {
+       //该block是在发送请求失败的时候回调
     }];
+
 ```
 
