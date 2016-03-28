@@ -70,6 +70,21 @@ Example:
  *  @return 下载的任务
  */
 + (NSURLSessionDownloadTask *)downloadFileWithUrlString:(NSString *)urlString finishedDownLoad:(DownLoadSucceed)downLoadSucceed resumeDownLoad:(DownloadResume)resumedownload currentProgress:(DownLoadprogress)progress;
+
+/**
+ *   暂停某个下载任务
+ *
+ *  @param downLoadtask 要暂停的下载任务
+ */
++ (void)cancelDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadtask;
+
+
+/**
+ *  继续某个下载任务
+ *
+ *  @param downLoadTask 要继续下载的任务
+ */
++ (void)continueDownLoadWithTask:(NSURLSessionDownloadTask *)downLoadTask;
 ```
 Example:
 执行一个下载操作
@@ -84,5 +99,10 @@ NSURLSessionDownloadTask *task = [CacheNetWork downloadFileWithUrlString:downLoa
         //执行下载操作过程种会一直调用该block，该Block会频繁的调用，可以在block种获得下载进度
     }];
     [task resume];
+    
+//暂停任务task
+[ [CacheNetWork shareCacheNetWork] cancelDownLoadWithTask:task];
 
+// 恢复下载任务
+[ [CacheNetWork shareCacheNetWork] continueDownLoadWithTask:task];
 ```
